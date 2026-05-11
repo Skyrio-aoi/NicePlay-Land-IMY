@@ -1,0 +1,139 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+
+<div class="hero">
+    <span class="icon-xxl">🎟️</span>
+    <h1>Riwayat Pembelian Tiket</h1>
+    <p>Semua pembelian ticket kamu di Nice PlayLand</p>
+</div>
+
+<!-- Loading Skeletons -->
+<div id="loadingState">
+    <div class="stats" style="opacity: 0.8;">
+        <div class="stat-card purple skeleton">
+            <h3 class="skeleton-text-lg"></h3>
+            <p class="skeleton-text"></p>
+        </div>
+        <div class="stat-card green skeleton">
+            <h3 class="skeleton-text-lg"></h3>
+            <p class="skeleton-text"></p>
+        </div>
+        <div class="stat-card cyan skeleton">
+            <h3 class="skeleton-text-lg"></h3>
+            <p class="skeleton-text"></p>
+        </div>
+    </div>
+    <div class="card skeleton">
+        <h3 class="skeleton-text-lg"></h3>
+        <div class="tickets-list">
+            <div class="skeleton-grid-item">
+                <div class="skeleton-card">
+                    <div class="skeleton-text"></div>
+                    <div class="skeleton-text"></div>
+                    <div class="skeleton-text"></div>
+                </div>
+            </div>
+            <div class="skeleton-grid-item">
+                <div class="skeleton-card">
+                    <div class="skeleton-text"></div>
+                    <div class="skeleton-text"></div>
+                    <div class="skeleton-text"></div>
+                </div>
+            </div>
+            <div class="skeleton-grid-item">
+                <div class="skeleton-card">
+                    <div class="skeleton-text"></div>
+                    <div class="skeleton-text"></div>
+                    <div class="skeleton-text"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Actual Content -->
+<div id="content" style="display: none;">
+    {% if tickets and tickets|length > 0 %}
+    <div class="stats">
+        <div class="stat-card purple">
+            <h3>Total Beli</h3>
+            <p>{{ tickets|length }}</p>
+        </div>
+        <div class="stat-card green">
+            <h3>Sudah Digunakan</h3>
+            <p>{{ tickets|selectattr('status', 'equalto', 'used')|list|length }}</p>
+        </div>
+        <div class="stat-card cyan">
+            <h3>Belum Digunakan</h3>
+            <p>{{ tickets|selectattr('status', 'equalto', 'valid')|list|length }}</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>📋 Daftar Tiket</h3>
+        <div class="tickets-list">
+            {% for t in tickets %}
+            <div class="ticket-item">
+                <div class="ticket-info">
+                    <div class="ticket-id">🎫 {{ t['id'][:16] }}...</div>
+                    <div class="ticket-desc">
+                        <span>👤 {{ t['nama'] }}</span>
+                        <span>🎟️ {{ t['jumlah'] }} tiket</span>
+                    </div>
+                </div>
+                <div class="ticket-status">
+                    {% if t['status'] == 'used' %}
+                    <span class="badge used">✅ Sudah Digunakan</span>
+                    {% else %}
+                    <span class="badge valid">🎫 Belum Digunakan</span>
+                    {% if session.get('role') == 'admin' %}
+                    <a href="/verify/{{ t['id'] }}" class="btn btn-green">Gunakan Tiket</a>
+                    {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>📝 Cara Menggunakan Tiket</h3>
+        <ol style="color: var(--text-secondary); padding-left: 20px; line-height: 2;">
+            <li>Klik tombol <strong>"Gunakan Tiket"</strong> di samping ticket yang belum digunakan</li>
+            <li>Tunjukkan QR code saat masuk wahana</li>
+            <li>QR code hanya bisa digunakan sekali</li>
+            <li>Simpan bukticreenshot jika perlu</li>
+        </ol>
+    </div>
+
+    {% else %}
+    <!-- Enhanced Empty State -->
+    <div class="empty-card" style="text-align: center; padding: 60px 20px;">
+        <div class="empty-icon" style="font-size: 80px; margin-bottom: 20px;">🎫</div>
+        <h2>Belum Ada Pembelian Tiket</h2>
+        <p>Anda belum pernah membeli ticket di Nice PlayLand. Yuk, segera beli ticket dan nikmati semua wahana seru yang kami sediakan!</p>
+        <a href="/ticket" class="btn btn-primary w-auto" style="padding: 14px 30px; margin-top: 20px;">
+            🎟️ Beli Tiket Sekarang
+        </a>
+        <p style="margin-top: 15px; font-size: 14px; color: var(--text-secondary);">
+            Atau lihat daftar wahana yang tersedia terlebih dahulu:
+        </a>
+        <a href="/explore" class="btn btn-outline w-auto" style="padding: 12px 25px; margin-top: 8px;">
+            🎢 Lihat Wahana
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Simulate loading delay for demo purposes
+    setTimeout(() => {
+        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('content').style.display = 'block';
+    }, 800);
+});
+</script>
+
+{% endblock %}

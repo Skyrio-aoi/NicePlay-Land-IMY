@@ -1,0 +1,105 @@
+{% extends 'layout/base.html' %}
+
+{% block content %}
+
+<div class="hero">
+    <div class="hero-icon">🎢</div>
+    <h1>Wahana Nice PlayLand</h1>
+    <p>8 Wahana seru dan aman untuk keluarga di Indramayu!</p>
+</div>
+
+<!-- Status Banner -->
+<div class="status-banner">
+    <div class="status-dot"></div>
+    <span>Semua Wahana OPERATIONAL</span>
+</div>
+
+<!-- Category Tabs -->
+<div class="category-tabs">
+    <button class="tab active" onclick="filterWahana('all')">Semua</button>
+    <button class="tab" onclick="filterWahana('dry')">🌊 Wahana Dry</button>
+    <button class="tab" onclick="filterWahana('water')">💧 Wahana Air</button>
+    <button class="tab" onclick="filterWahana('indoor')">🏠 Indoor</button>
+</div>
+
+<!-- Wahana Grid -->
+<div class="wahana-grid" id="wahanaGrid">
+    <!-- Loading skeleton -->
+    <div class="skeleton-grid-item">
+        <div class="skeleton-card">
+            <div class="skeleton-text-lg"></div>
+            <div class="skeleton-text"></div>
+            <div class="skeleton-text"></div>
+        </div>
+    </div>
+    <div class="skeleton-grid-item">
+        <div class="skeleton-card">
+            <div class="skeleton-text-lg"></div>
+            <div class="skeleton-text"></div>
+            <div class="skeleton-text"></div>
+        </div>
+    </div>
+    <div class="skeleton-grid-item">
+        <div class="skeleton-card">
+            <div class="skeleton-text-lg"></div>
+            <div class="skeleton-text"></div>
+            <div class="skeleton-text"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Empty State -->
+<div class="empty-card" id="emptyState" style="display: none;">
+    <div class="empty-icon">🎢</div>
+    <h2>Belum Ada Wahana</h2>
+    <p>Sepertinya belum ada wahana yang tersedia saat ini. Kembali nanti atau hubungi admin untuk menambahkan wahana baru.</p>
+    <a href="/admin/manage_wahana" class="btn-primary">Tambah Wahana (Admin)</a>
+</div>
+
+<!-- Events Section -->
+<div class="card events-section">
+    <h3>📅 Event Mendatang</h3>
+    <div class="events-timeline" id="eventsTimeline">
+        <!-- Loading skeleton -->
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line"></div>
+    </div>
+</div>
+
+<script>
+function filterWahana(category) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+    document.querySelectorAll('.wahana-card').forEach(card => {
+        card.style.display = (category === 'all' || card.dataset.category === category) ? 'block' : 'none';
+    });
+}
+
+// Hide loading skeletons and show actual content when data loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Simulate data loading - in real app, this would come from AJAX/fetch
+    setTimeout(() => {
+        // Hide skeletons
+        document.querySelectorAll('.skeleton-grid-item').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.events-timeline .skeleton-line').forEach(el => el.style.display = 'none');
+        
+        // Show actual content (already rendered by Flask)
+        document.querySelectorAll('.wahana-card').forEach(el => el.style.display = 'block');
+        
+        // Check if there's any content to show
+        const wahanaCards = document.querySelectorAll('.wahana-card:not(.skeleton-grid-item)');
+        const eventsContent = document.querySelector('#eventsTimeline .event-card');
+        
+        if (wahanaCards.length === 0) {
+            document.getElementById('emptyState').style.display = 'block';
+        }
+        
+        if (!eventsContent) {
+            document.getElementById('eventsTimeline').innerHTML = '<div class="skeleton-line"></div><p class="text-center text-muted py-4">Belum ada event yang dijadwalkan</p>';
+        }
+    }, 1000); // Simulate network delay
+});
+</script>
+
+{% endblock %}
