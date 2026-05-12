@@ -15,7 +15,9 @@ from config import (
 )
 
 # Setup Flask
-app = Flask(__name__)
+import os
+template_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
+app = Flask(__name__, template_folder=template_dir)
 app.secret_key = SECRET_KEY
 app.debug = DEBUG
 
